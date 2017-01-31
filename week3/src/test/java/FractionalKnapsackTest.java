@@ -62,5 +62,20 @@ public class FractionalKnapsackTest {
         assertEquals(0.0000, FractionalKnapsack.getOptimalValue(capacity, values, weights), .01);
 
     }
-
+    
+    @Test
+    public void unbalancedValues() {
+    	int[] values = {60,100};
+    	int[] weights = {20,50,30};
+        int capacity = 50;
+        assertEquals(120.0000, FractionalKnapsack.getOptimalValue(capacity, values, weights), .01);
+    }
+    
+    @Test
+    public void unbalancedWeights() {
+    	int[] values = {60,100,120};
+    	int[] weights = {20,50,};
+        int capacity = 50;
+        assertEquals(120.0000, FractionalKnapsack.getOptimalValue(capacity, values, weights), .01);
+    }
 }
