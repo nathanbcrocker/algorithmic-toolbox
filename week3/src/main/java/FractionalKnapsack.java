@@ -1,44 +1,8 @@
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class FractionalKnapsack {
-
-    //TODO introduce ratio array and sort
-    //then increment past elements (ratio, value, weight) once consumed
-    //e.g. ratio[i + j]
-    public static double getOptimalValue(int capacity, int[] values, int[] weights) {
-        double value = 0.0;
-        while(capacity > 0) {
-            int index = index(values, weights);
-            if (index == -1) {
-                return value;
-            }
-
-            double a = Math.ceil(Math.min(weights[index], capacity));
-            value += a * ((double)values[index]/(double)weights[index]);
-            weights[index] -= (int)a;
-            capacity -= (int)a;
-        }
-
-        return value;
-    }
-
-    private static int index(int[] values, int[] weights) {
-        double max = 0.0;
-        int index = -1;
-        for (int i = 0; i < values.length && i < weights.length; i++) {
-            if (weights[i] == 0.0) {
-                continue;
-            }
-
-            double tmp = values[i]/weights[i];
-            if (tmp > max) {
-                index = i;
-                max = tmp;
-            }
-        }
-
-        return index;
-    }
 
     public static void main(String args[]) {
         Scanner scanner = new Scanner(System.in);
@@ -50,6 +14,46 @@ public class FractionalKnapsack {
             values[i] = scanner.nextInt();
             weights[i] = scanner.nextInt();
         }
+        
+        scanner.close();
         System.out.println(getOptimalValue(capacity, values, weights));
+    }
+	
+    public static double getOptimalValue(int capacity, int[] values, int[] weights) {
+    	if (values.length == 0 || weights.length == 0) {
+    		return 0.0d;    	
+    	}
+    	
+    	double[][] ratios = new double[weights.length][2];
+    	
+    	for (int i = 0; i < ratios.length; i++) {
+    		double weight = (double)weights[i];
+    		double ratio = 0.0d;
+    		if (weight > 0.0 && values.length > i) {
+    			ratio = ((double)values[i])/weight;
+    		}
+    		
+    		ratios[i][0] = ratio;
+    		ratios[i][1] = weight;    		
+    	}
+    	
+    	Arrays.sort(ratios , new Comparator<double[]>() {
+            
+            public int compare(double[] o1, double[] o2) {
+                return ((Double)o2[0]).compareTo((Double)o1[0]);
+            }
+        });
+    	
+        double value = 0.0;
+        int j = 0;
+        while(capacity > 0 && j < ratios.length) {
+            double a = Math.ceil(Math.min(ratios[j][1], capacity));
+            value += a * ratios[j][0];
+            weights[j] -= (int)Math.ceil(a);
+            capacity -= (int)Math.ceil(a);
+            j++;
+        }
+
+        return value;
     }
 } 
